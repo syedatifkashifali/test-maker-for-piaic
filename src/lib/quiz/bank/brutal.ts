@@ -1,0 +1,103 @@
+import { Q } from "./helpers";
+import type { Question } from "../types";
+
+export const BRUTAL: Question[] = [
+  Q(
+    "x1",
+    "brutal",
+    "agentic",
+    "A practitioner, having observed that an exploratory traversal of a three-hundred-file tree has saturated the primary context window, elects to encode the same traversal as a skill whose description guarantees automatic invocation, on the theory that “skills isolate work.” A colleague objects that isolation of token-heavy reconnaissance is the office of a subagent, whereas a skill merely interpolates a playbook into the already-polluted thread. Which distinction is the course’s?",
+    [
+      "The practitioner is correct: a skill always opens a fresh context window and is therefore the cheaper isolate.",
+      "The colleague is correct: a skill runs in the current window with the current model; a subagent is a separate worker whose intermediate reads never enter the main thread.",
+      "Both mechanisms are identical once a description field exists; the names are vendor cosmetics.",
+      "Hooks, not subagents, are the isolation primitive, because they cannot be skipped.",
+    ],
+    1,
+    "Skill = playbook in-thread. Subagent = isolated worker returning a summary. Hooks enforce; they do not isolate search.",
+  ),
+  Q(
+    "x2",
+    "brutal",
+    "sdd",
+    "A constitution forbids multi-paragraph comments; a spec, purporting to remain implementation-agnostic, nevertheless stipulates Postgres row-level security and a particular ORM “as acceptance criteria.” A reviewer claims the constitution is the proper home of stack constraints and that the spec has smuggled HOW under the guise of verification. A second reviewer claims acceptance criteria may name any technology if tests will bind it. Which reading is SDD-consistent?",
+    [
+      "The second reviewer: whatever a test can bind is WHAT, not HOW.",
+      "The first reviewer: the spec’s job is observable behaviour; stack and comment density are constitution/plan concerns, and naming RLS/ORM in the spec is a HOW leak even if tests mention them later.",
+      "Neither: both documents are deprecated once plan mode exists.",
+      "Both must be merged into AGENTS.md or the four-phase loop is invalid.",
+    ],
+    1,
+    "Acceptance criteria should make behaviour fail visibly. They should not launder a stack decision into the spec.",
+  ),
+  Q(
+    "x3",
+    "brutal",
+    "thesis",
+    "An executive proposes that an identic agent, because it “carries the founder’s judgment,” should also be the firm’s accounts-payable Digital FTE, thereby collapsing the edge layer and the workforce layer into a single long-lived chat with payment protocols attached. Which thesis objection is the most precise?",
+    [
+      "Identic agents are forbidden from using ACP/AP2/x402/MPP.",
+      "The two-layer model separates a personal delegate (edge) from role-based workers that run against a system of record under a management layer; collapsing them destroys the spec-as-contract and turns the founder’s chat into an ungoverned ledger.",
+      "Digital FTEs cannot be economic actors; only identic agents can hold mandates.",
+      "The 10-80-10 rule forbids any agent from touching payments.",
+    ],
+    1,
+    "Identic ≠ Digital FTE. Payments rails do not license a layer collapse. Records and management still sit under workers.",
+  ),
+  Q(
+    "x4",
+    "brutal",
+    "problem",
+    "A session exhibits simultaneously: (i) a plausible legal memo that misquotes a clause, (ii) a single prompt that rewrote twelve files, and (iii) no execution trace beyond the final paragraph. A consultant maps these, respectively, to Confident Wrong, Big Bang, and Black Box, and assigns P3, P4, and P7. A sceptic says all three are “just context rot” and that /compact is the unique remedy. Which mapping holds?",
+    [
+      "The sceptic: one command repairs all three named patterns.",
+      "The consultant: the patterns are distinct failure modes with distinct principles; compact may help a poisoned chat but does not substitute for citation checks, reversible steps, or observability.",
+      "Both: P1 Bash repairs citation errors because grep is truth.",
+      "Neither: Cowork users are exempt from the Seven Principles.",
+    ],
+    1,
+    "Do not flatten every failure into context rot. The five patterns are diagnostic, not synonyms.",
+  ),
+  Q(
+    "x5",
+    "brutal",
+    "openclaw",
+    "A public Telegram group is allowed to message an unsandboxed OpenClaw whose workspace includes client secrets and whose MEMORY.md has accreted unvetted “facts” from the channel. A proposer wants a longer SOUL.md instructing the model to ignore injections. A second proposer wants NemoClaw/OpenShell containment, credential hygiene outside the workspace, and a refusal to promote channel text into MEMORY without a human commit. Which is aligned with the course’s threat model?",
+    [
+      "The first: tone files are a sufficient control plane for public injection.",
+      "The second: public channels are injection surfaces; cage the filesystem and egress, keep secrets in the credentials store, and treat MEMORY as a committed layer, not a dump of the channel cache.",
+      "Neither: Discord is the only unsafe channel.",
+      "Both: heartbeat intervals sanitise prompt injection statistically.",
+    ],
+    1,
+    "SOUL.md is not a security boundary. Sandbox + secrets discipline + deliberate MEMORY commits are.",
+  ),
+  Q(
+    "x6",
+    "brutal",
+    "layer",
+    "A platform team declares that because they have selected a single frontier model, they now “are” the AI operating layer, and therefore need neither a knowledge system of record nor an audit trail, the model being “self-governing.” Which pair of invariants have they discarded?",
+    [
+      "ACP and x402",
+      "Replaceability of the reasoning model, and governance/trusted records as durable structure independent of that model",
+      "P1 and P2 of problem-solving",
+      "Plan mode and /compact",
+    ],
+    1,
+    "The layer’s point is that the model is a slot. Records and governance outlive it. Self-governing models are the category error the course names.",
+  ),
+  Q(
+    "x7",
+    "brutal",
+    "agentic",
+    "An engineer, citing Uncle Bob’s 2026 remark that he no longer reads agent-written code, disables all review and ships on a single green test file the agent also authored. Cherny’s verification claim and Martin’s actual sequence are being used as a permission slip. What ratio does the course insist on?",
+    [
+      "Celebrity quotes replace checkers; the test file is sufficient because it is “independent.”",
+      "Trust is proportional to the checkers you can name. Martin built extreme automated constraints first; Cherny’s 2–3× claim assumes a check the model cannot skip. An agent-authored test without a second check is not that ratio.",
+      "Hooks are unnecessary once a famous engineer stops reading diffs.",
+      "Spec-as-Source forbids tests.",
+    ],
+    1,
+    "The course is explicit: he built the checks first. Confidence is the size of the checkers, not a mood and not a tweet.",
+  ),
+];
