@@ -150,6 +150,10 @@ export default defineConfig(({ command, isPreview }) => ({
     host: "0.0.0.0",
     port: 8080,
     strictPort: true,
+    // The live preview is served through a generated proxy host
+    // (`https://<port>-<sandbox>.e2b.app`). Without this the dev server
+    // answers the preview with 403 "Blocked request. This host is not allowed".
+    allowedHosts: [".e2b.app", "localhost", "127.0.0.1"],
   },
   preview: {
     host: "127.0.0.1",

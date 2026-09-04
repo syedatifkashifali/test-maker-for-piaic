@@ -87,7 +87,7 @@ var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 * the dev styles URL for route-scoped CSS collection.
 */
 async function getStartManifest(matchedRoutes) {
-	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-C0kulyCh.mjs");
+	const { tsrStartManifest } = await import("../_tanstack-start-manifest_v-DF-6xI-y.mjs");
 	const startManifest = tsrStartManifest();
 	let routes = startManifest.routes;
 	routes[rootRouteId];
@@ -109,11 +109,15 @@ async function getStartManifest(matchedRoutes) {
 var manifest = {
 	"4756143a09db6e2f520dae6b690ba2f0fa916138bce6c96e2d90718dce762ae1": {
 		functionName: "bankSitting_createServerFn_handler",
-		importer: () => import("./generate-DSLRvcvo.mjs")
+		importer: () => import("./generate-B6_nxUa3.mjs")
 	},
 	"9a33745239df4986cb279c320da2e94478ac561455556e58b07291d6b77d502f": {
 		functionName: "generateSitting_createServerFn_handler",
-		importer: () => import("./generate-DSLRvcvo.mjs")
+		importer: () => import("./generate-B6_nxUa3.mjs")
+	},
+	"e82b6de5a0dd4d15a23f67e2674901da102643fb485d14ea5ed911e3d269d02f": {
+		functionName: "bankCoverage_createServerFn_handler",
+		importer: () => import("./generate-B6_nxUa3.mjs")
 	}
 };
 async function getServerFnById(id, access) {
@@ -1383,7 +1387,7 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
 	const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-		import("./router-BIzvkZzA.mjs").then((n) => n.t),
+		import("./router-XFBfEzbQ.mjs").then((n) => n.t),
 		import("./start-5Z2QO8AU.mjs"),
 		import("./empty-plugin-adapters-D9UWiqvJ.mjs")
 	]);

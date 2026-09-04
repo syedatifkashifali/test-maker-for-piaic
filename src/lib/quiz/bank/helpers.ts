@@ -1,4 +1,4 @@
-import type { CourseId, Question, QuestionKind } from "../types";
+import type { CourseId, Question, QuestionKind } from "../types.ts";
 
 export function Q(
   id: string,
