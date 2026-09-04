@@ -1,9 +1,9 @@
 import { i as __toESM, n as __exportAll } from "../_runtime.mjs";
 import { R as require_react, _ as useRouter, f as createRouter, g as createRootRoute, h as createFileRoute, l as Scripts, m as lazyRouteComponent, p as Outlet, u as HeadContent, v as require_jsx_runtime } from "../_libs/@tanstack/react-router+[...].mjs";
 import { a as object, c as union, i as number, o as string, r as literal } from "../_libs/zod.mjs";
-import { t as TriangleAlert } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-BIzvkZzA.js
-var router_BIzvkZzA_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+import { n as TriangleAlert } from "../_libs/lucide-react.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/router-XFBfEzbQ.js
+var router_XFBfEzbQ_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function AppErrorComponent({ error }) {
@@ -272,7 +272,7 @@ function PreviewHostBridge() {
 	}, [router]);
 	return null;
 }
-var styles_default = "/assets/styles-Cf_3GzWM.css";
+var styles_default = "/assets/styles-D2pgH9Ve.css";
 var APP_NAME = "Canon Hall";
 var Route$1 = createRootRoute({
 	head: () => ({
@@ -336,7 +336,7 @@ var Route$1 = createRootRoute({
 		] })]
 	})
 });
-var $$splitComponentImporter = () => import("./routes-kFzw1gk3.mjs");
+var $$splitComponentImporter = () => import("./routes-g5SONVue.mjs");
 var rootRouteChildren = { IndexRoute: createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") }).update({
 	id: "/",
 	path: "/",
@@ -350,4 +350,4 @@ function getRouter() {
 	});
 }
 //#endregion
-export { getRouter, router_BIzvkZzA_exports as t };
+export { getRouter, router_XFBfEzbQ_exports as t };

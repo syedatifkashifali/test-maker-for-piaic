@@ -1,8 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { CORPUS } from "./corpus";
-import { fillKind } from "./bank";
-import { prepareSittingQuestions } from "./shuffle";
+import { CORPUS } from "./corpus.ts";
+import { fillKind } from "./bank/index.ts";
+import { prepareSittingQuestions } from "./shuffle.ts";
 import {
   COURSE_IDS,
   COURSES,
@@ -11,12 +11,17 @@ import {
   type CourseId,
   type Question,
   type QuestionKind,
-} from "./types";
+} from "./types.ts";
 
 const courseSchema = z.enum(COURSE_IDS);
 
 const inputSchema = z.object({
   courses: z.array(courseSchema).min(1),
+  /**
+   * Question ids the candidate sat last time. They go to the back of the queue
+   * rather than being excluded, so a full paper is always possible.
+   */
+  avoid: z.array(z.string()).max(500).optional(),
 });
 
 const modelQuestionSchema = z.object({
@@ -24,12 +29,7 @@ const modelQuestionSchema = z.object({
   course: courseSchema,
   stem: z.string().min(40),
   options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
-  correctIndex: z.union([
-    z.literal(0),
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-  ]),
+  correctIndex: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
   explanation: z.string().min(20),
 });
 
@@ -39,7 +39,10 @@ const batchSchema = z.object({
 
 const STYLE = `
 EXAM STYLE (mandatory — this is a Panaversity-hard sitting):
-- Four options A–D. Never make the correct option the longest, the only specific, or the only one naming a file.
+- Four options A–D, and the answer must not be findable without knowing the canon.
+- LENGTH PARITY (hard rule): all four options within 8% of each other in characters. If the correct option is the longest it is guessable, so cut it or lengthen the distractors until it is not. No option may be a throwaway one-liner next to three full sentences.
+- Never make the correct option the only specific one, the only one naming a file, or the only one that hedges.
+- Distractors must be near-miss: real course concepts, misapplied to this situation. A distractor a candidate can eliminate on sight wastes the slot.
 - Options must be near-synonyms of each other: two will look almost right; one is a common mix-up of adjacent concepts (skill vs subagent, compact vs clear, constitution vs spec, identic vs Digital FTE, SOUL vs MEMORY, model vs layer, hook vs rules file).
 - Do NOT telegraph the answer in the stem. Bury the diagnostic detail in a long situation.
 - No "which of the following is true" unless kind=book.
@@ -57,9 +60,7 @@ GROUNDING: Only facts in the CANON below. If unsure, do not invent product behav
 `.trim();
 
 function kindPrompt(kind: QuestionKind, count: number, courses: CourseId[]) {
-  const labels = courses
-    .map((id) => COURSES.find((c) => c.id === id)?.title ?? id)
-    .join("; ");
+  const labels = courses.map((id) => COURSES.find((c) => c.id === id)?.title ?? id).join("; ");
   return `Write exactly ${count} multiple-choice questions of kind="${kind}" covering these courses: ${labels}.
 Spread across those courses; do not put every question on one page.
 Return JSON only: {"questions":[{ "kind":"${kind}", "course":"<id>", "stem":"...", "options":["...","...","...","..."], "correctIndex":0, "explanation":"..." }]}
@@ -85,8 +86,7 @@ async function completeJson(prompt: string, maxTokens: number): Promise<string> 
       messages: [
         {
           role: "system",
-          content:
-            "You write Panaversity-difficulty exam items. JSON only. No markdown.",
+          content: "You write Panaversity-difficulty exam items. JSON only. No markdown.",
         },
         {
           role: "user",
@@ -137,14 +137,15 @@ async function generateKind(
   kind: QuestionKind,
   count: number,
   courses: CourseId[],
+  avoid: string[],
 ): Promise<Question[]> {
   const maxTokens = Math.min(16000, 900 + count * 520);
   try {
     const raw = await completeJson(kindPrompt(kind, count, courses), maxTokens);
     const got = parseBatch(raw, kind);
-    return fillKind(kind, got, count, courses);
+    return fillKind(kind, got, count, courses, avoid);
   } catch {
-    return fillKind(kind, [], count, courses);
+    return fillKind(kind, [], count, courses, avoid);
   }
 }
 
@@ -152,6 +153,10 @@ export const generateSitting = createServerFn({ method: "POST" })
   .validator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
     const courses = data.courses;
+    const avoid = data.avoid ?? [];
+    // Reported so the UI can say plainly that the prepared bank was used,
+    // instead of quietly serving bank questions under a "model" label.
+    const modelAvailable = Boolean(process.env.XAI_API_KEY);
     const chunks: { kind: QuestionKind; count: number }[] = [
       { kind: "book", count: MIX.book },
       { kind: "teammates", count: MIX.teammates },
@@ -160,21 +165,23 @@ export const generateSitting = createServerFn({ method: "POST" })
     ];
 
     const parts = await Promise.all(
-      chunks.map((c) => generateKind(c.kind, c.count, courses)),
+      chunks.map((c) => generateKind(c.kind, c.count, courses, avoid)),
     );
     const questions = prepareSittingQuestions(parts.flat());
     if (questions.length !== TOTAL_QUESTIONS) {
       return {
         ok: false as const,
         error: "Could not assemble a full sitting.",
+        modelAvailable,
+        generatedCount: 0,
       };
     }
-    const generated = questions.filter((q) => q.id.startsWith("g-")).length;
+    const generatedCount = questions.filter((q) => q.id.startsWith("g-")).length;
     return {
       ok: true as const,
-      source: (generated >= 40 ? "generated" : "bank") as
-        | "generated"
-        | "bank",
+      source: (generatedCount >= 40 ? "generated" : "bank") as "generated" | "bank",
+      modelAvailable,
+      generatedCount,
       questions,
     };
   });
@@ -182,7 +189,17 @@ export const generateSitting = createServerFn({ method: "POST" })
 export const bankSitting = createServerFn({ method: "POST" })
   .validator((input: unknown) => inputSchema.parse(input))
   .handler(async ({ data }) => {
-    const { pickBankSitting } = await import("./bank");
-    const questions = prepareSittingQuestions(pickBankSitting(data.courses));
+    const { pickBankSitting } = await import("./bank/index.ts");
+    const questions = prepareSittingQuestions(pickBankSitting(data.courses, data.avoid ?? []));
     return { ok: true as const, source: "bank" as const, questions };
   });
+
+/**
+ * Bank depth per course, so the hall can say what deselecting a course costs
+ * before the candidate commits. Computed from the same bank the sitting is
+ * drawn from, so it cannot drift from it.
+ */
+export const bankCoverage = createServerFn({ method: "GET" }).handler(async () => {
+  const { bankCoverageByCourse } = await import("./bank/index.ts");
+  return bankCoverageByCourse();
+});
